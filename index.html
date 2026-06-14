@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0ea5e9">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>MUGHIS BANK - ERP Mini System v2.1</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <div id="loginPage" class="login-page active">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="login-logo">MB</div>
+                <h1>MUGHIS BANK</h1>
+                <p>ERP Mini & Cloud Multi-Account System</p>
+            </div>
+            <div class="login-form">
+                <div class="form-group">
+                    <label class="form-label">Alamat Email Sesi</label>
+                    <input type="email" class="form-input" id="loginEmail" placeholder="contoh: admin@mughis.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Kata Sandi</label>
+                    <input type="password" class="form-input" id="loginPassword" placeholder="Masukkan password akun">
+                </div>
+                <button class="btn btn-primary w-full" onclick="handleSystemLogin()">Masuk ke Akun</button>
+                <div style="text-align: center; margin: 12px 0; color: var(--text-secondary); font-size: 13px;">atau gunakan</div>
+                <div id="googleBtnContainer" style="display: flex; justify-content: center;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="appContainer" class="app-container" style="display: none;">
+        <header class="app-header">
+            <div class="header-brand">
+                <span class="brand-logo">MB</span>
+                <div>
+                    <h2 id="businessNameDisplay">MUGHIS BANK</h2>
+                    <p id="userProfileEmailDisplay" style="font-size: 11px; color: var(--text-secondary); font-weight: normal;"></p>
+                </div>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="handleSystemLogout()">🚪 Pindah / Keluar Akun</button>
+        </header>
+
+        <main class="app-content" id="dashboardPage">
+            <div class="card card-balance">
+                <p class="card-subtitle">Total Saldo Bank Berjalan (Kas Terkonsolidasi)</p>
+                <h1 class="card-title" id="dashboardTotalBalance">Rp 0</h1>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h3 class="section-title">📊 Arus Buku Kas Umum</h3>
+                    <div class="stat-row">
+                        <span class="stat-label">Total Pendapatan (In):</span>
+                        <span class="stat-value text-success" id="financeIncome">Rp 0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Total Pengeluaran (Out):</span>
+                        <span class="stat-value text-danger" id="financeExpense">Rp 0</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-row font-bold">
+                        <span class="stat-label">Laba Bersih Buku Kas:</span>
+                        <span class="stat-value text-primary" id="financeNetProfit">Rp 0</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="section-title">📄 Performa Transaksi Invoice</h3>
+                    <div class="stat-row">
+                        <span class="stat-label">Nilai Omset Masuk:</span>
+                        <span class="stat-value text-success" id="invoiceIncome">Rp 0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Biaya Modal Keluar:</span>
+                        <span class="stat-value text-danger" id="invoiceCost">Rp 0</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-row font-bold">
+                        <span class="stat-label">Laba Bersih Invoice:</span>
+                        <span class="stat-value text-success" id="invoiceNetProfit">Rp 0</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="section-title">💳 Buku Rekap Hutang & Piutang</h3>
+                    <div class="stat-row">
+                        <span class="stat-label">Total Piutang (Aset Kita):</span>
+                        <span class="stat-value text-success" id="summaryPiutang">Rp 0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Total Hutang (Kewajiban):</span>
+                        <span class="stat-value text-danger" id="summaryHutang">Rp 0</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-row font-bold">
+                        <span class="stat-label">Sisa Selisih Kewajiban:</span>
+                        <span class="stat-value" id="summaryNetDebts">Rp 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="section-title">⚡ Akses Navigasi Menu Cepat</h3>
+                <div class="quick-menu-grid">
+                    <button class="btn btn-outline" onclick="switchTab('invoiceTab')">📄 Kelola Invoice</button>
+                    <button class="btn btn-outline" onclick="switchTab('transactionTab')">💵 Entri Buku Kas</button>
+                    <button class="btn btn-outline" onclick="switchTab('debtsTab')">📌 Hutang Piutang</button>
+                    <button class="btn btn-outline" onclick="switchTab('reportsTab')">📅 Laporan Bisnis</button>
+                    <button class="btn btn-outline" onclick="switchTab('settingsTab')">⚙️ Setelan Aplikasi</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h3 class="section-title" style="margin-bottom: 0;">📋 Ringkasan Dokumen Invoice Terbaru</h3>
+                    <button class="btn btn-primary btn-sm" onclick="switchTab('invoiceTab')">Lihat Semua</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>No. Invoice</th>
+                                <th>Nama Pelanggan</th>
+                                <th>Total Tagihan</th>
+                                <th>Status Tagihan</th>
+                                <th style="text-align: center;">Tombol Pelunasan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashboardInvoiceSummaryList">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="section-title">🔄 Riwayat Log Aktivitas Sistem</h3>
+                <div class="activity-timeline" id="dashboardActivityLog">
+                    </div>
+            </div>
+        </main>
+
+        <div class="modal-overlay" id="invoiceDetailModal">
+            <div class="modal" style="max-height:95vh; width: 95%; max-width: 850px; overflow-y:auto">
+                <div class="modal-header no-print">
+                    <span class="modal-title">Lembar Pratinjau Invoice</span>
+                    <button class="modal-close" onclick="closeModal('invoiceDetailModal')">✕</button>
+                </div>
+                
+                <div class="no-print layout-selector-box">
+                    <span style="font-size: 13px; font-weight: bold; color: var(--text);">Format Ukuran Ekspor Slip Gambar:</span>
+                    <div style="display: flex; gap: 15px; margin-top: 5px;">
+                        <label class="pointer"><input type="radio" name="slipPrintLayout" value="a4-portrait" checked> Kertas A4 Tegak (Portrait) - Teks Panjang</label>
+                        <label class="pointer"><input type="radio" name="slipPrintLayout" value="a4-landscape"> Kertas A4 Lebar (Landscape)</label>
+                    </div>
+                </div>
+
+                <div class="modal-body" id="invoiceDetailContent"></div>
+                <div class="modal-body no-print" style="padding-top:0; display:flex; gap:10px; flex-wrap:wrap;">
+                    <button class="btn btn-primary" onclick="generateLargeA4SlipImage()">📸 Ambil & Bagikan Foto Slip (A4)</button>
+                    <button class="btn btn-success" onclick="sendWhatsAppInvoice()">📱 Kirim via WhatsApp</button>
+                    <button class="btn btn-outline" onclick="editCurrentInvoice()">✏️ Koreksi Data</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="slipCaptureArea" style="position:fixed; left:-9999px; top:0; z-index:-1; background:#ffffff;"></div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/modules.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
