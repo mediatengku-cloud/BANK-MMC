@@ -2,7 +2,7 @@
 
 const APP_NAME = 'MUGHIS BANK';
 const JSONBIN_API = 'https://api.jsonbin.io/v3/b';
-const JSONBIN_KEY = '$2a$10$mughisgroup2024secretkey';
+const JSONBIN_KEY = '$2a$10$mSL6WQm7kBCTRDisRmHm4ugCwt7LVugUA5SPIheR8l.FpGo1g.5jq';
 
 // Firebase Config (Opsional untuk integrasi lebih lanjut)
 const FIREBASE_CONFIG = {
